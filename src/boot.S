@@ -2,9 +2,10 @@
 .set ALIGN,    1<<0             /* align loaded modules on page boundaries */
 .set MEMINFO,  1<<1             /* provide memory map */
 .set FLAGS,    ALIGN | MEMINFO  /* this is the Multiboot 'flag' field */
-.set MAGIC,    0x1BADB002       /* 'magic number' lets bootloader find the header */
+.set MAGIC,    0xe85250d6       /* 'magic number' lets bootloader find the header */
 .set CHECKSUM, -(MAGIC + FLAGS) /* checksum of above, to prove we are multiboot */
- 
+.set ARCHITECTURE, 0            /* 0 = i386, 1 = PowerPC, 2 = IA64, 3 = x86-64 */
+         /* where the header is loaded */
 /* 
 Declare a multiboot header that marks the program as a kernel. These are magic
 values that are documented in the multiboot standard. The bootloader will
@@ -13,11 +14,17 @@ search for this signature in the first 8 KiB of the kernel file, aligned at a
 forced to be within the first 8 KiB of the kernel file.
 */
 .section .multiboot
-.align 4
+header_start:
+// .align 4
 .long MAGIC
+.long ARCHITECTURE
+.long header_start - header_end
 .long FLAGS
-.long CHECKSUM
- 
+.long 0x100000000 - (0xe85250d6 + 0 + (header_end - header_start))
+.long 0 // type
+.long 0 // flags
+.long 8 // size
+header_end:
 /*
 The multiboot standard does not define the value of the stack pointer register
 (esp) and it is up to the kernel to provide a stack. This allocates room for a
