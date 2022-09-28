@@ -63,7 +63,7 @@ _start:
 	stack (as it grows downwards on x86 systems). This is necessarily done
 	in assembly as languages such as C cannot function without a stack.
 	*/
-	mov esp, stack_top 
+	mov esp, stack_top // Btw this uses intel syntax
  
 	/*
 	This is a good place to initialize crucial processor state before the
@@ -84,7 +84,7 @@ _start:
 	stack since (pushed 0 bytes so far), so the alignment has thus been
 	preserved and the call is well defined.
 	*/
-	jmp kernel_main
+	call kernel_main // Jmp cuz it won't return.
  
 	/*
 	If the system has nothing more to do, put the computer into an
